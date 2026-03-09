@@ -37,10 +37,10 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
 
     let result = if config.case_sensitive {
-        search_case_sensitive(&config.query, &contents);
+        search_case_sensitive(&config.query, &contents)
     }
     else {
-        search_case_insensitive(&config.query, &contents);
+        search_case_insensitive(&config.query, &contents)
     };
 
     println!("{:?}", result);
