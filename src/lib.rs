@@ -10,12 +10,21 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
+    pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
         if args.len() < 3 {
             return Err("too few arguments")
         }
-        let query = args[1].clone(); 
-        let filename = args[2].clone();
+        args.next();
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("no query parameter found")
+        }; 
+        let filename =  match args.next() {
+            Some(arg) => arg,
+            None => return Err("no filename parameter found")
+        }; 
+
         let case_sensitive = env::var("CASE_SENSITIVE").is_ok();
 
         Ok(Config { query, filename, case_sensitive })
@@ -43,37 +52,21 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         search_case_insensitive(&config.query, &contents)
     };
 
-    println!("{:?}", result);
-
 
     Ok(())
 }
 
 fn search_case_sensitive <'a>(q: &str, contents: &'a str) -> Vec<&'a str> {
-
-    let mut result = Vec::new();
-
-    for l in contents.lines() {
-        if l.contains(&q){
-            result.push(l.trim());
-        }
-    }
-
-    result
+    contents.lines()
+    .filter(|l| l.contains(q))
+    .collect()
 }
 
 
 fn search_case_insensitive <'a>(q: &str, contents: &'a str) -> Vec<&'a str> {
-
-    let mut result = Vec::new();
-
-    for l in contents.lines() {
-        if l.to_lowercase().contains(&q.to_lowercase()){
-            result.push(l.trim());
-        }
-    }
-
-    result
+    contents.lines()
+    .filter(|l| l.to_lowercase().contains(&q.to_lowercase()))
+    .collect()
 }
 
 
