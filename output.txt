@@ -1,0 +1,2 @@
+searching for i in test.txt
+["this is a text for testing ....", "Is it wrong to understand", "The fear that dwells inside a man?", "What's it like to be a loon?", "I liken it to a balloon"]
