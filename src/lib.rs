@@ -28,11 +28,45 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         Err(e) => panic!("{e}")
     };
 
-    let mut data = String :: new();
+    let mut contents = String :: new();
     
-    file.read_to_string(&mut data)?;
+    file.read_to_string(&mut contents)?;
+
+    let result = search(&config.query, &contents);
+
+    println!("{:?}", result);
 
 
-    println!("\n{data}");
     Ok(())
+}
+
+fn search <'a>(q: &str, contents: &'a str) -> Vec<&'a str> {
+
+    let mut result = Vec::new();
+
+    for l in contents.lines() {
+        if l.contains(q){
+            result.push(l);
+        }
+    }
+
+    result
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn one_result(){
+        let query = "biblioteca";
+        let contents = "\
+            donde esta la biblioteca?
+            Mi amo T-bone
+            La aragna discoteca
+        ";
+    
+        assert_eq!(vec!["donde esta la biblioteca?"], search(query, contents));
+
+    }
 }
